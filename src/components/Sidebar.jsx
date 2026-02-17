@@ -1,43 +1,108 @@
-import { memo, useState } from 'react';
+import { memo, useState, useMemo } from 'react';
 
-const nodeCategories = [
+// JavaScript node kategorileri
+const jsNodeCategories = [
   {
     name: 'Temel',
     nodes: [
       { type: 'input', label: 'Giriş', color: 'blue', icon: '📥', description: 'Veri girişi' },
       { type: 'output', label: 'Çıkış', color: 'orange', icon: '📤', description: 'Sonuç göster' },
+      { type: 'console', label: 'Console', color: 'gray', icon: '🖥️', description: 'console.log()' },
     ]
   },
   {
     name: 'İşlemler',
     nodes: [
-      { type: 'function', label: 'Fonksiyon', color: 'purple', icon: '⚙️', description: 'Veri dönüştür' },
-      { type: 'math', label: 'Matematik', color: 'cyan', icon: '🔢', description: 'Sayı işlemleri' },
-      { type: 'text', label: 'Metin', color: 'pink', icon: '✂️', description: 'Metin işleme' },
+      { type: 'function', label: 'Fonksiyon', color: 'purple', icon: '⚙️', description: 'Arrow function' },
+      { type: 'math', label: 'Matematik', color: 'cyan', icon: '🔢', description: 'Math işlemleri' },
+      { type: 'text', label: 'Metin', color: 'pink', icon: '✂️', description: 'String işleme' },
+      { type: 'regex', label: 'RegEx', color: 'red', icon: '🔍', description: 'RegExp işlemleri' },
     ]
   },
   {
     name: 'Kontrol',
     nodes: [
-      { type: 'logic', label: 'Mantık', color: 'green', icon: '🔀', description: 'Koşul kontrol' },
-      { type: 'delay', label: 'Gecikme', color: 'yellow', icon: '⏱️', description: 'Bekletme' },
-      { type: 'merge', label: 'Birleştir', color: 'indigo', icon: '🔗', description: 'Veri birleştir' },
+      { type: 'logic', label: 'Mantık', color: 'green', icon: '🔀', description: 'Boolean logic' },
+      { type: 'conditional', label: 'If-Else', color: 'fuchsia', icon: '⚖️', description: 'Ternary/if-else' },
+      { type: 'loop', label: 'Döngü', color: 'sky', icon: '🔄', description: 'for/forEach/map' },
+      { type: 'delay', label: 'Gecikme', color: 'yellow', icon: '⏱️', description: 'setTimeout' },
+      { type: 'merge', label: 'Birleştir', color: 'indigo', icon: '🔗', description: 'Object.assign' },
     ]
   },
   {
     name: 'Veri',
     nodes: [
-      { type: 'json', label: 'JSON', color: 'teal', icon: '📋', description: 'JSON işlemleri' },
-      { type: 'array', label: 'Dizi', color: 'lime', icon: '📊', description: 'Dizi işlemleri' },
-      { type: 'api', label: 'API', color: 'rose', icon: '🌐', description: 'HTTP istekleri' },
+      { type: 'json', label: 'JSON', color: 'teal', icon: '📋', description: 'JSON parse/stringify' },
+      { type: 'array', label: 'Dizi', color: 'lime', icon: '📊', description: 'Array methods' },
+      { type: 'storage', label: 'Storage', color: 'amber', icon: '💾', description: 'localStorage' },
+    ]
+  },
+  {
+    name: 'API',
+    nodes: [
+      { type: 'api', label: 'Mock API', color: 'rose', icon: '🎭', description: 'Mock HTTP' },
+      { type: 'fetch', label: 'Fetch', color: 'emerald', icon: '🌐', description: 'fetch() API' },
     ]
   },
   {
     name: 'Diğer',
     nodes: [
-      { type: 'random', label: 'Rastgele', color: 'violet', icon: '🎲', description: 'Rastgele üret' },
-      { type: 'date', label: 'Tarih', color: 'amber', icon: '📅', description: 'Tarih işlemleri' },
-      { type: 'note', label: 'Not', color: 'slate', icon: '📝', description: 'Yorum ekle' },
+      { type: 'random', label: 'Rastgele', color: 'violet', icon: '🎲', description: 'Math.random()' },
+      { type: 'date', label: 'Tarih', color: 'amber', icon: '📅', description: 'Date object' },
+      { type: 'note', label: 'Not', color: 'slate', icon: '📝', description: '// Yorum' },
+    ]
+  }
+];
+
+// Python node kategorileri
+const pythonNodeCategories = [
+  {
+    name: 'Temel',
+    nodes: [
+      { type: 'input', label: 'Giriş', color: 'blue', icon: '📥', description: 'Değişken tanımla' },
+      { type: 'output', label: 'Çıkış', color: 'orange', icon: '📤', description: 'Sonuç döndür' },
+      { type: 'console', label: 'Print', color: 'gray', icon: '🖥️', description: 'print()' },
+    ]
+  },
+  {
+    name: 'İşlemler',
+    nodes: [
+      { type: 'function', label: 'Fonksiyon', color: 'purple', icon: '⚙️', description: 'def function' },
+      { type: 'math', label: 'Matematik', color: 'cyan', icon: '🔢', description: 'math modülü' },
+      { type: 'text', label: 'Metin', color: 'pink', icon: '✂️', description: 'str methods' },
+      { type: 'regex', label: 'RegEx', color: 'red', icon: '🔍', description: 're modülü' },
+    ]
+  },
+  {
+    name: 'Kontrol',
+    nodes: [
+      { type: 'logic', label: 'Mantık', color: 'green', icon: '🔀', description: 'and/or/not' },
+      { type: 'conditional', label: 'If-Else', color: 'fuchsia', icon: '⚖️', description: 'if/elif/else' },
+      { type: 'loop', label: 'Döngü', color: 'sky', icon: '🔄', description: 'for/while' },
+      { type: 'delay', label: 'Gecikme', color: 'yellow', icon: '⏱️', description: 'time.sleep()' },
+      { type: 'merge', label: 'Birleştir', color: 'indigo', icon: '🔗', description: 'dict merge' },
+    ]
+  },
+  {
+    name: 'Veri',
+    nodes: [
+      { type: 'json', label: 'JSON', color: 'teal', icon: '📋', description: 'json modülü' },
+      { type: 'array', label: 'Liste', color: 'lime', icon: '📊', description: 'list methods' },
+    ]
+  },
+  {
+    name: 'API',
+    nodes: [
+      { type: 'api', label: 'Mock API', color: 'rose', icon: '🎭', description: 'Mock HTTP' },
+      { type: 'fetch', label: 'Requests', color: 'emerald', icon: '🌐', description: 'requests lib' },
+    ]
+  },
+  {
+    name: 'Diğer',
+    nodes: [
+      { type: 'random', label: 'Rastgele', color: 'violet', icon: '🎲', description: 'random modülü' },
+      { type: 'date', label: 'Tarih', color: 'amber', icon: '📅', description: 'datetime' },
+      { type: 'note', label: 'Not', color: 'slate', icon: '📝', description: '# Yorum' },
     ]
   }
 ];
@@ -57,6 +122,11 @@ const colorClasses = {
   lime: 'border-lime-500/30 hover:border-lime-500/60 hover:shadow-lime-500/20',
   violet: 'border-violet-500/30 hover:border-violet-500/60 hover:shadow-violet-500/20',
   slate: 'border-slate-500/30 hover:border-slate-500/60 hover:shadow-slate-500/20',
+  red: 'border-red-500/30 hover:border-red-500/60 hover:shadow-red-500/20',
+  emerald: 'border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-emerald-500/20',
+  sky: 'border-sky-500/30 hover:border-sky-500/60 hover:shadow-sky-500/20',
+  fuchsia: 'border-fuchsia-500/30 hover:border-fuchsia-500/60 hover:shadow-fuchsia-500/20',
+  gray: 'border-gray-500/30 hover:border-gray-500/60 hover:shadow-gray-500/20',
 };
 
 const textColors = {
@@ -74,11 +144,21 @@ const textColors = {
   lime: 'text-lime-400',
   violet: 'text-violet-400',
   slate: 'text-slate-400',
+  red: 'text-red-400',
+  emerald: 'text-emerald-400',
+  sky: 'text-sky-400',
+  fuchsia: 'text-fuchsia-400',
+  gray: 'text-gray-400',
 };
 
-const Sidebar = memo(() => {
+const Sidebar = memo(({ selectedLanguage = 'javascript' }) => {
+  const nodeCategories = useMemo(() => 
+    selectedLanguage === 'python' ? pythonNodeCategories : jsNodeCategories,
+    [selectedLanguage]
+  );
+
   const [expandedCategories, setExpandedCategories] = useState(
-    nodeCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: true }), {})
+    jsNodeCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: true }), {})
   );
 
   const toggleCategory = (name) => {
@@ -93,7 +173,12 @@ const Sidebar = memo(() => {
   return (
     <div className="w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700/50 flex flex-col h-full">
       <div className="p-4 border-b border-slate-700/50">
-        <h2 className="text-lg font-bold text-white mb-1">Bloklar</h2>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-lg">{selectedLanguage === 'python' ? '🐍' : '⚡'}</span>
+          <h2 className="text-lg font-bold text-white">
+            {selectedLanguage === 'python' ? 'Python' : 'JavaScript'}
+          </h2>
+        </div>
         <p className="text-xs text-slate-400">Sürükle ve bırak</p>
       </div>
       

@@ -12,6 +12,12 @@ import DateNode from './DateNode';
 import JSONNode from './JSONNode';
 import ArrayNode from './ArrayNode';
 import APINode from './APINode';
+import RegexNode from './RegexNode';
+import FetchNode from './FetchNode';
+import LoopNode from './LoopNode';
+import ConditionalNode from './ConditionalNode';
+import StorageNode from './StorageNode';
+import ConsoleNode from './ConsoleNode';
 
 export const nodeTypes = {
   input: InputNode,
@@ -28,6 +34,12 @@ export const nodeTypes = {
   json: JSONNode,
   array: ArrayNode,
   api: APINode,
+  regex: RegexNode,
+  fetch: FetchNode,
+  loop: LoopNode,
+  conditional: ConditionalNode,
+  storage: StorageNode,
+  console: ConsoleNode,
 };
 
-export { InputNode, FunctionNode, LogicNode, OutputNode, MathNode, TextNode, DelayNode, MergeNode, RandomNode, NoteNode, DateNode, JSONNode, ArrayNode, APINode };
+export { InputNode, FunctionNode, LogicNode, OutputNode, MathNode, TextNode, DelayNode, MergeNode, RandomNode, NoteNode, DateNode, JSONNode, ArrayNode, APINode, RegexNode, FetchNode, LoopNode, ConditionalNode, StorageNode, ConsoleNode };

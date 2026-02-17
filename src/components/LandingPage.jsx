@@ -35,7 +35,7 @@ const languages = [
     description: 'Python kodu oluşturmak için görsel bloklar kullanın',
     gradient: 'from-blue-400 to-yellow-400',
     shadowColor: 'rgba(59, 130, 246, 0.4)',
-    available: false,
+    available: true,
   },
   {
     id: 'java',

@@ -148,7 +148,13 @@ export function useFlowManager() {
       date: 'now',
       json: 'parse',
       array: 'length',
-      api: 'get'
+      api: 'get',
+      regex: 'test',
+      fetch: 'GET',
+      loop: 'forEach',
+      conditional: 'equals',
+      storage: 'get',
+      console: 'log'
     };
     const defaultOperation = defaultOperations[type] || 'uppercase';
     
@@ -170,6 +176,26 @@ export function useFlowManager() {
         min: 0,
         max: 100,
         note: '',
+        // New node type properties
+        pattern: '',
+        flags: '',
+        replacement: '',
+        method: 'GET',
+        url: '',
+        body: '',
+        headers: '',
+        loopType: 'forEach',
+        expression: 'x',
+        start: 0,
+        end: 10,
+        initialValue: '0',
+        operator: 'equals',
+        trueValue: '',
+        falseValue: '',
+        storageType: 'local',
+        key: '',
+        logType: 'log',
+        label: '',
         onChange: (value) => updateNodeData(newNodeId, { value }),
         onOperationChange: (operation) => updateNodeData(newNodeId, { operation }),
         onConditionChange: (condition) => updateNodeData(newNodeId, { condition }),
@@ -183,6 +209,26 @@ export function useFlowManager() {
         onMinChange: (min) => updateNodeData(newNodeId, { min }),
         onMaxChange: (max) => updateNodeData(newNodeId, { max }),
         onNoteChange: (note) => updateNodeData(newNodeId, { note }),
+        // New callbacks
+        onPatternChange: (pattern) => updateNodeData(newNodeId, { pattern }),
+        onFlagsChange: (flags) => updateNodeData(newNodeId, { flags }),
+        onReplacementChange: (replacement) => updateNodeData(newNodeId, { replacement }),
+        onMethodChange: (method) => updateNodeData(newNodeId, { method }),
+        onUrlChange: (url) => updateNodeData(newNodeId, { url }),
+        onBodyChange: (body) => updateNodeData(newNodeId, { body }),
+        onHeadersChange: (headers) => updateNodeData(newNodeId, { headers }),
+        onLoopTypeChange: (loopType) => updateNodeData(newNodeId, { loopType }),
+        onExpressionChange: (expression) => updateNodeData(newNodeId, { expression }),
+        onStartChange: (start) => updateNodeData(newNodeId, { start }),
+        onEndChange: (end) => updateNodeData(newNodeId, { end }),
+        onInitialValueChange: (initialValue) => updateNodeData(newNodeId, { initialValue }),
+        onOperatorChange: (operator) => updateNodeData(newNodeId, { operator }),
+        onTrueValueChange: (trueValue) => updateNodeData(newNodeId, { trueValue }),
+        onFalseValueChange: (falseValue) => updateNodeData(newNodeId, { falseValue }),
+        onStorageTypeChange: (storageType) => updateNodeData(newNodeId, { storageType }),
+        onKeyChange: (key) => updateNodeData(newNodeId, { key }),
+        onLogTypeChange: (logType) => updateNodeData(newNodeId, { logType }),
+        onLabelChange: (label) => updateNodeData(newNodeId, { label }),
       },
     };
 
@@ -202,7 +248,13 @@ export function useFlowManager() {
       date: 'Tarih',
       json: 'JSON',
       array: 'Dizi',
-      api: 'API'
+      api: 'API',
+      regex: 'RegEx',
+      fetch: 'Fetch',
+      loop: 'Döngü',
+      conditional: 'If-Else',
+      storage: 'Storage',
+      console: 'Console'
     };
     toast.success(`${typeNames[type] || type} bloğu eklendi!`, { duration: 1500 });
   }, [setNodes, updateNodeData]);

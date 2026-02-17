@@ -18,7 +18,7 @@ import HelpModal from './components/HelpModal';
 import TemplatesModal from './components/TemplatesModal';
 import LandingPage from './components/LandingPage';
 import { useFlowManager } from './hooks/useFlowManager';
-import { generateCode } from './utils/flowUtils';
+import { generateCode, generatePythonCode } from './utils/flowUtils';
 
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
@@ -122,6 +122,7 @@ function App() {
   }, [undo, redo, exportFlow, handleRun]);
 
   const code = generateCode(nodes, edges);
+  const pythonCode = generatePythonCode(nodes, edges);
 
   // Show landing page if no language selected
   if (!selectedLanguage) {
@@ -172,7 +173,7 @@ function App() {
       />
       
       <div className="flex-1 flex overflow-hidden">
-        <Sidebar />
+        <Sidebar selectedLanguage={selectedLanguage} />
         
         <div className="flex-1 relative" ref={reactFlowWrapper}>
           <ReactFlow
@@ -247,6 +248,8 @@ function App() {
       <CodeDrawer 
         isOpen={isCodeDrawerOpen}
         code={code}
+        pythonCode={pythonCode}
+        selectedLanguage={selectedLanguage}
         onClose={() => setIsCodeDrawerOpen(false)}
       />
       

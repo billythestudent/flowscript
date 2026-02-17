@@ -2,7 +2,13 @@ import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Highlight, themes } from 'prism-react-renderer';
 
-const CodeDrawer = memo(({ isOpen, code, onClose }) => {
+const CodeDrawer = memo(({ isOpen, code, pythonCode, selectedLanguage = 'javascript', onClose }) => {
+  const isPython = selectedLanguage === 'python';
+  const currentCode = isPython ? pythonCode : code;
+  const fileName = isPython ? 'flow.py' : 'flow.js';
+  const languageLabel = isPython ? '🐍 Python' : '⚡ JavaScript';
+  const languageColor = isPython ? 'blue' : 'yellow';
+  
   return (
     <AnimatePresence>
       {isOpen && (
@@ -29,6 +35,9 @@ const CodeDrawer = memo(({ isOpen, code, onClose }) => {
               <div className="flex items-center gap-2">
                 <span className="text-lg">{'</>'}</span>
                 <h2 className="text-lg font-semibold text-white">Üretilen Kod</h2>
+                <span className={`px-2 py-1 rounded text-xs font-medium bg-${languageColor}-500/20 text-${languageColor}-400`}>
+                  {languageLabel}
+                </span>
               </div>
               <button
                 onClick={onClose}
@@ -47,10 +56,10 @@ const CodeDrawer = memo(({ isOpen, code, onClose }) => {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <span className="text-xs text-slate-400 ml-2">flow.js</span>
+                  <span className="text-xs text-slate-400 ml-2">{fileName}</span>
                 </div>
                 
-                <Highlight theme={themes.nightOwl} code={code} language="javascript">
+                <Highlight theme={themes.nightOwl} code={currentCode} language={isPython ? 'python' : 'javascript'}>
                   {({ className, style, tokens, getLineProps, getTokenProps }) => (
                     <pre className={`${className} p-4 text-sm overflow-x-auto`} style={{ ...style, background: 'transparent', margin: 0 }}>
                       {tokens.map((line, i) => (
@@ -74,7 +83,7 @@ const CodeDrawer = memo(({ isOpen, code, onClose }) => {
             {/* Footer */}
             <div className="p-4 border-t border-slate-700/50">
               <button
-                onClick={() => navigator.clipboard.writeText(code)}
+                onClick={() => navigator.clipboard.writeText(currentCode)}
                 className="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-sm transition-colors"
               >
                 📋 Kodu Kopyala
