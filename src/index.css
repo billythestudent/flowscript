@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+/* Custom scrollbar for dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* React Flow customizations */
+.react-flow__node {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.react-flow__node.selected > div,
+.react-flow__node:focus > div,
+.react-flow__node:focus-visible > div {
+  outline: none !important;
+}
+
+.react-flow__node.selected,
+.react-flow__node:focus,
+.react-flow__node:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove default selection indicator */
+.react-flow__node.selected::after,
+.react-flow__node.selected::before {
+  display: none !important;
+}
+
+/* Disable React Flow's default node selection box */
+.react-flow__node-default.selected,
+.react-flow__node-input.selected,
+.react-flow__node-output.selected,
+.react-flow__node-group.selected,
+.react-flow__node-function.selected,
+.react-flow__node-logic.selected,
+.react-flow__node-math.selected,
+.react-flow__node-text.selected,
+.react-flow__node-delay.selected,
+.react-flow__node-merge.selected,
+.react-flow__node-random.selected,
+.react-flow__node-note.selected {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Override all node selections */
+[class*="react-flow__node"].selected {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+/* Neon glow effects */
+.neon-blue {
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.neon-purple {
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.neon-green {
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+.neon-orange {
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5), 0 0 20px rgba(249, 115, 22, 0.3);
+}
+
+/* Input focus neon effect */
+.input-neon:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5), 0 0 15px rgba(59, 130, 246, 0.4);
+  outline: none;
+}
+
+/* Glass morphism base */
+.glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Smooth transitions everywhere */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animation keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes flow-animation {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-flow {
+  stroke-dasharray: 5 5;
+  animation: flow-animation 1s linear infinite;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #0f172a;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+/* Light Theme Styles */
+.light body,
+html.light body {
+  background-color: #f8fafc;
+}
+
+html.light .bg-slate-900 {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/90 {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+html.light .bg-slate-800,
+html.light .bg-slate-800\/50,
+html.light .bg-slate-800\/80 {
+  background-color: rgba(226, 232, 240, 0.8) !important;
+}
+
+html.light .text-white {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-300,
+html.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-500 {
+  color: #64748b !important;
+}
+
+html.light .border-slate-700\/50,
+html.light .border-slate-700 {
+  border-color: rgba(203, 213, 225, 0.8) !important;
+}
+
+html.light .border-slate-600\/50 {
+  border-color: rgba(203, 213, 225, 0.6) !important;
+}
+
+html.light .glass {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(203, 213, 225, 0.5) !important;
+}
+
+html.light .react-flow__background {
+  background-color: #f8fafc !important;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #e2e8f0;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
