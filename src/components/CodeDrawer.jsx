@@ -81,7 +81,21 @@ const CodeDrawer = memo(({ isOpen, code, pythonCode, selectedLanguage = 'javascr
             </div>
             
             {/* Footer */}
-            <div className="p-4 border-t border-slate-700/50">
+            <div className="p-4 border-t border-slate-700/50 space-y-2">
+              <button
+                onClick={() => {
+                  const blob = new Blob([currentCode], { type: 'text/plain' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = fileName;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="w-full py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium text-sm transition-all"
+              >
+                💾 {isPython ? 'Python' : 'JavaScript'} Dosyası İndir
+              </button>
               <button
                 onClick={() => navigator.clipboard.writeText(currentCode)}
                 className="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-sm transition-colors"
