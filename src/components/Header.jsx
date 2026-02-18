@@ -9,7 +9,7 @@ const languageNames = {
   java: 'Java',
 };
 
-const Header = memo(({ onRun, isRunning, onToggleCodeDrawer, isCodeDrawerOpen, onExport, onImport, onClear, onUndo, onRedo, canUndo, canRedo, selectedLanguage, onBackToHome, flowRef }) => {
+const Header = memo(({ onRun, isRunning, onToggleCodeDrawer, isCodeDrawerOpen, onExport, onImport, onClear, onUndo, onRedo, canUndo, canRedo, selectedLanguage, onBackToHome, flowRef, onShare, onCollaborate }) => {
   const fileInputRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
 
@@ -146,6 +146,24 @@ const Header = memo(({ onRun, isRunning, onToggleCodeDrawer, isCodeDrawerOpen, o
       </div>
       
       <div className="flex items-center gap-3">
+        {/* Collaborate Button */}
+        <button
+          onClick={onCollaborate}
+          className="px-3 py-2 rounded-lg font-medium text-sm bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 hover:from-green-500/30 hover:to-emerald-500/30 hover:text-white transition-all duration-200 border border-green-500/30"
+          title="Canlı İşbirliği"
+        >
+          👥 İşbirliği
+        </button>
+
+        {/* Share Button */}
+        <button
+          onClick={onShare}
+          className="px-3 py-2 rounded-lg font-medium text-sm bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 hover:from-blue-500/30 hover:to-purple-500/30 hover:text-white transition-all duration-200 border border-blue-500/30"
+          title="Flow'u Paylaş"
+        >
+          🔗 Paylaş
+        </button>
+
         <button
           onClick={toggleTheme}
           className="px-3 py-2 rounded-lg font-medium text-sm bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-200"

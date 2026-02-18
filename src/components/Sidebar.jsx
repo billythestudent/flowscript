@@ -25,8 +25,16 @@ const jsNodeCategories = [
       { type: 'logic', label: 'Mantık', color: 'green', icon: '🔀', description: 'Boolean logic' },
       { type: 'conditional', label: 'If-Else', color: 'fuchsia', icon: '⚖️', description: 'Ternary/if-else' },
       { type: 'loop', label: 'Döngü', color: 'sky', icon: '🔄', description: 'for/forEach/map' },
+      { type: 'tryCatch', label: 'Try-Catch', color: 'red', icon: '🛡️', description: 'Hata yakalama' },
       { type: 'delay', label: 'Gecikme', color: 'yellow', icon: '⏱️', description: 'setTimeout' },
       { type: 'merge', label: 'Birleştir', color: 'indigo', icon: '🔗', description: 'Object.assign' },
+    ]
+  },
+  {
+    name: 'Dosya',
+    nodes: [
+      { type: 'fileRead', label: 'Dosya Oku', color: 'emerald', icon: '📖', description: 'fs.readFile' },
+      { type: 'fileWrite', label: 'Dosya Yaz', color: 'amber', icon: '✍️', description: 'fs.writeFile' },
     ]
   },
   {
@@ -79,8 +87,16 @@ const pythonNodeCategories = [
       { type: 'logic', label: 'Mantık', color: 'green', icon: '🔀', description: 'and/or/not' },
       { type: 'conditional', label: 'If-Else', color: 'fuchsia', icon: '⚖️', description: 'if/elif/else' },
       { type: 'loop', label: 'Döngü', color: 'sky', icon: '🔄', description: 'for/while' },
+      { type: 'tryCatch', label: 'Try-Except', color: 'red', icon: '🛡️', description: 'Hata yakalama' },
       { type: 'delay', label: 'Gecikme', color: 'yellow', icon: '⏱️', description: 'time.sleep()' },
       { type: 'merge', label: 'Birleştir', color: 'indigo', icon: '🔗', description: 'dict merge' },
+    ]
+  },
+  {
+    name: 'Dosya',
+    nodes: [
+      { type: 'fileRead', label: 'Dosya Oku', color: 'emerald', icon: '📖', description: 'open() read' },
+      { type: 'fileWrite', label: 'Dosya Yaz', color: 'amber', icon: '✍️', description: 'open() write' },
     ]
   },
   {
@@ -132,8 +148,16 @@ const javaNodeCategories = [
       { type: 'logic', label: 'Mantık', color: 'green', icon: '🔀', description: '&&/||/!' },
       { type: 'conditional', label: 'If-Else', color: 'fuchsia', icon: '⚖️', description: 'if/else if/else' },
       { type: 'loop', label: 'Döngü', color: 'sky', icon: '🔄', description: 'for/forEach/while' },
+      { type: 'tryCatch', label: 'Try-Catch', color: 'red', icon: '🛡️', description: 'Exception handling' },
       { type: 'delay', label: 'Gecikme', color: 'yellow', icon: '⏱️', description: 'Thread.sleep()' },
       { type: 'merge', label: 'Birleştir', color: 'indigo', icon: '🔗', description: 'Map merge' },
+    ]
+  },
+  {
+    name: 'Dosya',
+    nodes: [
+      { type: 'fileRead', label: 'Dosya Oku', color: 'emerald', icon: '📖', description: 'Files.readString' },
+      { type: 'fileWrite', label: 'Dosya Yaz', color: 'amber', icon: '✍️', description: 'Files.writeString' },
     ]
   },
   {

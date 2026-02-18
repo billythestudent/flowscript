@@ -17,6 +17,8 @@ import ResultModal from './components/ResultModal';
 import HelpModal from './components/HelpModal';
 import TemplatesModal from './components/TemplatesModal';
 import LandingPage from './components/LandingPage';
+import ShareModal from './components/ShareModal';
+import CollaborationModal from './components/CollaborationModal';
 import { useFlowManager } from './hooks/useFlowManager';
 import { generateCode, generatePythonCode, generateJavaCode } from './utils/flowUtils';
 
@@ -31,6 +33,8 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [result, setResult] = useState(null);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isCollabOpen, setIsCollabOpen] = useState(false);
   
   const handleSelectLanguage = useCallback((lang) => {
     setSelectedLanguage(lang);
@@ -173,6 +177,8 @@ function App() {
         selectedLanguage={selectedLanguage}
         onBackToHome={handleBackToHome}
         flowRef={flowRef}
+        onShare={() => setIsShareOpen(true)}
+        onCollaborate={() => setIsCollabOpen(true)}
       />
       
       <div className="flex-1 flex overflow-hidden">
@@ -272,6 +278,21 @@ function App() {
         isOpen={isTemplatesOpen}
         onClose={() => setIsTemplatesOpen(false)}
         onSelectTemplate={handleSelectTemplate}
+      />
+      
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        nodes={nodes}
+        edges={edges}
+        selectedLanguage={selectedLanguage}
+      />
+      
+      <CollaborationModal
+        isOpen={isCollabOpen}
+        onClose={() => setIsCollabOpen(false)}
+        nodes={nodes}
+        edges={edges}
       />
       
       {/* Templates button */}

@@ -18,6 +18,9 @@ import LoopNode from './LoopNode';
 import ConditionalNode from './ConditionalNode';
 import StorageNode from './StorageNode';
 import ConsoleNode from './ConsoleNode';
+import TryCatchNode from './TryCatchNode';
+import FileReadNode from './FileReadNode';
+import FileWriteNode from './FileWriteNode';
 
 export const nodeTypes = {
   input: InputNode,
@@ -40,6 +43,9 @@ export const nodeTypes = {
   conditional: ConditionalNode,
   storage: StorageNode,
   console: ConsoleNode,
+  tryCatch: TryCatchNode,
+  fileRead: FileReadNode,
+  fileWrite: FileWriteNode,
 };
 
-export { InputNode, FunctionNode, LogicNode, OutputNode, MathNode, TextNode, DelayNode, MergeNode, RandomNode, NoteNode, DateNode, JSONNode, ArrayNode, APINode, RegexNode, FetchNode, LoopNode, ConditionalNode, StorageNode, ConsoleNode };
+export { InputNode, FunctionNode, LogicNode, OutputNode, MathNode, TextNode, DelayNode, MergeNode, RandomNode, NoteNode, DateNode, JSONNode, ArrayNode, APINode, RegexNode, FetchNode, LoopNode, ConditionalNode, StorageNode, ConsoleNode, TryCatchNode, FileReadNode, FileWriteNode };
