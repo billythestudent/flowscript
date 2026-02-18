@@ -52,7 +52,7 @@ const languages = [
     description: 'Java kodu oluşturmak için görsel programlama',
     gradient: 'from-red-500 to-blue-600',
     shadowColor: 'rgba(239, 68, 68, 0.4)',
-    available: false,
+    available: true,
   },
 ];
 

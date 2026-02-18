@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Background,
@@ -18,9 +18,10 @@ import HelpModal from './components/HelpModal';
 import TemplatesModal from './components/TemplatesModal';
 import LandingPage from './components/LandingPage';
 import { useFlowManager } from './hooks/useFlowManager';
-import { generateCode, generatePythonCode } from './utils/flowUtils';
+import { generateCode, generatePythonCode, generateJavaCode } from './utils/flowUtils';
 
 function App() {
+  const flowRef = useRef(null);
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
     return localStorage.getItem('selectedLanguage') || null;
   });
@@ -123,6 +124,7 @@ function App() {
 
   const code = generateCode(nodes, edges);
   const pythonCode = generatePythonCode(nodes, edges);
+  const javaCode = generateJavaCode(nodes, edges);
 
   // Show landing page if no language selected
   if (!selectedLanguage) {
@@ -170,12 +172,13 @@ function App() {
         canRedo={canRedo}
         selectedLanguage={selectedLanguage}
         onBackToHome={handleBackToHome}
+        flowRef={flowRef}
       />
       
       <div className="flex-1 flex overflow-hidden">
         <Sidebar selectedLanguage={selectedLanguage} />
         
-        <div className="flex-1 relative" ref={reactFlowWrapper}>
+        <div className="flex-1 relative" ref={(el) => { reactFlowWrapper.current = el; flowRef.current = el; }}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -249,6 +252,7 @@ function App() {
         isOpen={isCodeDrawerOpen}
         code={code}
         pythonCode={pythonCode}
+        javaCode={javaCode}
         selectedLanguage={selectedLanguage}
         onClose={() => setIsCodeDrawerOpen(false)}
       />

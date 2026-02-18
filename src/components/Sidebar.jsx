@@ -107,6 +107,59 @@ const pythonNodeCategories = [
   }
 ];
 
+// Java node kategorileri
+const javaNodeCategories = [
+  {
+    name: 'Temel',
+    nodes: [
+      { type: 'input', label: 'Giriş', color: 'blue', icon: '📥', description: 'Değişken tanımla' },
+      { type: 'output', label: 'Çıkış', color: 'orange', icon: '📤', description: 'return/print' },
+      { type: 'console', label: 'Print', color: 'gray', icon: '🖥️', description: 'System.out.println()' },
+    ]
+  },
+  {
+    name: 'İşlemler',
+    nodes: [
+      { type: 'function', label: 'Metot', color: 'purple', icon: '⚙️', description: 'public method' },
+      { type: 'math', label: 'Matematik', color: 'cyan', icon: '🔢', description: 'Math class' },
+      { type: 'text', label: 'Metin', color: 'pink', icon: '✂️', description: 'String methods' },
+      { type: 'regex', label: 'RegEx', color: 'red', icon: '🔍', description: 'Pattern/Matcher' },
+    ]
+  },
+  {
+    name: 'Kontrol',
+    nodes: [
+      { type: 'logic', label: 'Mantık', color: 'green', icon: '🔀', description: '&&/||/!' },
+      { type: 'conditional', label: 'If-Else', color: 'fuchsia', icon: '⚖️', description: 'if/else if/else' },
+      { type: 'loop', label: 'Döngü', color: 'sky', icon: '🔄', description: 'for/forEach/while' },
+      { type: 'delay', label: 'Gecikme', color: 'yellow', icon: '⏱️', description: 'Thread.sleep()' },
+      { type: 'merge', label: 'Birleştir', color: 'indigo', icon: '🔗', description: 'Map merge' },
+    ]
+  },
+  {
+    name: 'Veri',
+    nodes: [
+      { type: 'json', label: 'JSON', color: 'teal', icon: '📋', description: 'org.json / Gson' },
+      { type: 'array', label: 'Liste', color: 'lime', icon: '📊', description: 'ArrayList/Stream' },
+    ]
+  },
+  {
+    name: 'API',
+    nodes: [
+      { type: 'api', label: 'Mock API', color: 'rose', icon: '🎭', description: 'Mock HTTP' },
+      { type: 'fetch', label: 'HttpClient', color: 'emerald', icon: '🌐', description: 'HttpURLConnection' },
+    ]
+  },
+  {
+    name: 'Diğer',
+    nodes: [
+      { type: 'random', label: 'Rastgele', color: 'violet', icon: '🎲', description: 'Random class' },
+      { type: 'date', label: 'Tarih', color: 'amber', icon: '📅', description: 'LocalDateTime' },
+      { type: 'note', label: 'Not', color: 'slate', icon: '📝', description: '// Yorum' },
+    ]
+  }
+];
+
 const colorClasses = {
   blue: 'border-blue-500/30 hover:border-blue-500/60 hover:shadow-blue-500/20',
   purple: 'border-purple-500/30 hover:border-purple-500/60 hover:shadow-purple-500/20',
@@ -152,10 +205,30 @@ const textColors = {
 };
 
 const Sidebar = memo(({ selectedLanguage = 'javascript' }) => {
-  const nodeCategories = useMemo(() => 
-    selectedLanguage === 'python' ? pythonNodeCategories : jsNodeCategories,
-    [selectedLanguage]
-  );
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const nodeCategories = useMemo(() => {
+    if (selectedLanguage === 'python') return pythonNodeCategories;
+    if (selectedLanguage === 'java') return javaNodeCategories;
+    return jsNodeCategories;
+  }, [selectedLanguage]);
+
+  // Filter nodes based on search
+  const filteredCategories = useMemo(() => {
+    if (!searchTerm.trim()) return nodeCategories;
+    
+    const term = searchTerm.toLowerCase();
+    return nodeCategories
+      .map(category => ({
+        ...category,
+        nodes: category.nodes.filter(node => 
+          node.label.toLowerCase().includes(term) ||
+          node.description.toLowerCase().includes(term) ||
+          node.type.toLowerCase().includes(term)
+        )
+      }))
+      .filter(category => category.nodes.length > 0);
+  }, [nodeCategories, searchTerm]);
 
   const [expandedCategories, setExpandedCategories] = useState(
     jsNodeCategories.reduce((acc, cat) => ({ ...acc, [cat.name]: true }), {})
@@ -170,20 +243,52 @@ const Sidebar = memo(({ selectedLanguage = 'javascript' }) => {
     event.dataTransfer.effectAllowed = 'move';
   };
 
+  const getLanguageInfo = () => {
+    switch (selectedLanguage) {
+      case 'python': return { icon: '🐍', name: 'Python' };
+      case 'java': return { icon: '☕', name: 'Java' };
+      default: return { icon: '⚡', name: 'JavaScript' };
+    }
+  };
+  const langInfo = getLanguageInfo();
+
   return (
     <div className="w-64 bg-slate-900/90 backdrop-blur-xl border-r border-slate-700/50 flex flex-col h-full">
       <div className="p-4 border-b border-slate-700/50">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-lg">{selectedLanguage === 'python' ? '🐍' : '⚡'}</span>
-          <h2 className="text-lg font-bold text-white">
-            {selectedLanguage === 'python' ? 'Python' : 'JavaScript'}
-          </h2>
+          <span className="text-lg">{langInfo.icon}</span>
+          <h2 className="text-lg font-bold text-white">{langInfo.name}</h2>
         </div>
-        <p className="text-xs text-slate-400">Sürükle ve bırak</p>
+        <p className="text-xs text-slate-400 mb-3">Sürükle ve bırak</p>
+        
+        {/* Search Input */}
+        <div className="relative">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="🔍 Blok ara..."
+            className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-sm"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
       
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        {nodeCategories.map((category) => (
+        {filteredCategories.length === 0 ? (
+          <div className="text-center text-slate-500 text-sm py-8">
+            <p>🔍 Sonuç bulunamadı</p>
+            <p className="text-xs mt-1">Farklı bir arama deneyin</p>
+          </div>
+        ) : (
+          filteredCategories.map((category) => (
           <div key={category.name} className="mb-2">
             <button
               onClick={() => toggleCategory(category.name)}
@@ -216,7 +321,8 @@ const Sidebar = memo(({ selectedLanguage = 'javascript' }) => {
               </div>
             )}
           </div>
-        ))}
+        ))
+        )}
       </div>
       
       <div className="p-3 border-t border-slate-700/50">

@@ -2,12 +2,19 @@ import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Highlight, themes } from 'prism-react-renderer';
 
-const CodeDrawer = memo(({ isOpen, code, pythonCode, selectedLanguage = 'javascript', onClose }) => {
-  const isPython = selectedLanguage === 'python';
-  const currentCode = isPython ? pythonCode : code;
-  const fileName = isPython ? 'flow.py' : 'flow.js';
-  const languageLabel = isPython ? '🐍 Python' : '⚡ JavaScript';
-  const languageColor = isPython ? 'blue' : 'yellow';
+const getLanguageConfig = (selectedLanguage, code, pythonCode, javaCode) => {
+  switch (selectedLanguage) {
+    case 'python':
+      return { currentCode: pythonCode, fileName: 'flow.py', languageLabel: '🐍 Python', languageColor: 'blue', prismLang: 'python' };
+    case 'java':
+      return { currentCode: javaCode, fileName: 'Flow.java', languageLabel: '☕ Java', languageColor: 'red', prismLang: 'java' };
+    default:
+      return { currentCode: code, fileName: 'flow.js', languageLabel: '⚡ JavaScript', languageColor: 'yellow', prismLang: 'javascript' };
+  }
+};
+
+const CodeDrawer = memo(({ isOpen, code, pythonCode, javaCode, selectedLanguage = 'javascript', onClose }) => {
+  const { currentCode, fileName, languageLabel, languageColor, prismLang } = getLanguageConfig(selectedLanguage, code, pythonCode, javaCode);
   
   return (
     <AnimatePresence>
@@ -59,7 +66,7 @@ const CodeDrawer = memo(({ isOpen, code, pythonCode, selectedLanguage = 'javascr
                   <span className="text-xs text-slate-400 ml-2">{fileName}</span>
                 </div>
                 
-                <Highlight theme={themes.nightOwl} code={currentCode} language={isPython ? 'python' : 'javascript'}>
+                <Highlight theme={themes.nightOwl} code={currentCode} language={prismLang}>
                   {({ className, style, tokens, getLineProps, getTokenProps }) => (
                     <pre className={`${className} p-4 text-sm overflow-x-auto`} style={{ ...style, background: 'transparent', margin: 0 }}>
                       {tokens.map((line, i) => (
@@ -94,7 +101,7 @@ const CodeDrawer = memo(({ isOpen, code, pythonCode, selectedLanguage = 'javascr
                 }}
                 className="w-full py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium text-sm transition-all"
               >
-                💾 {isPython ? 'Python' : 'JavaScript'} Dosyası İndir
+                💾 {languageLabel} Dosyası İndir
               </button>
               <button
                 onClick={() => navigator.clipboard.writeText(currentCode)}

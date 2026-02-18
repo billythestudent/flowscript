@@ -4,7 +4,13 @@
   "description": "Görsel blokları sürükle-bırak yöntemiyle bağlayarak kod oluşturun",
   "author": "Halil İbrahim",
   "license": "Apache-2.0",
-  "keywords": ["visual-programming", "flow-builder", "react", "node-editor", "code-generator"],
+  "keywords": [
+    "visual-programming",
+    "flow-builder",
+    "react",
+    "node-editor",
+    "code-generator"
+  ],
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,6 +23,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "@xyflow/react": "^12.10.0",
     "framer-motion": "^12.34.0",
+    "html-to-image": "^1.11.13",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

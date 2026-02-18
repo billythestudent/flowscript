@@ -1153,3 +1153,457 @@ export function generatePythonCode(nodes, edges) {
 
   return code;
 }
+
+// Generate Java code from nodes and edges
+export function generateJavaCode(nodes, edges) {
+  if (nodes.length === 0) {
+    return '// Akış boş, blok ekleyin';
+  }
+
+  let imports = new Set([
+    'java.util.*',
+    'java.util.regex.*',
+    'java.time.*',
+    'java.time.format.*'
+  ]);
+  
+  let methodCode = '';
+  
+  // Find all node types
+  const inputNodes = nodes.filter(n => n.type === 'input');
+  const functionNodes = nodes.filter(n => n.type === 'function');
+  const mathNodes = nodes.filter(n => n.type === 'math');
+  const textNodes = nodes.filter(n => n.type === 'text');
+  const logicNodes = nodes.filter(n => n.type === 'logic');
+  const randomNodes = nodes.filter(n => n.type === 'random');
+  const mergeNodes = nodes.filter(n => n.type === 'merge');
+  const delayNodes = nodes.filter(n => n.type === 'delay');
+  const outputNodes = nodes.filter(n => n.type === 'output');
+  const regexNodes = nodes.filter(n => n.type === 'regex');
+  const fetchNodes = nodes.filter(n => n.type === 'fetch');
+  const loopNodes = nodes.filter(n => n.type === 'loop');
+  const conditionalNodes = nodes.filter(n => n.type === 'conditional');
+  const consoleNodes = nodes.filter(n => n.type === 'console');
+  const dateNodes = nodes.filter(n => n.type === 'date');
+  const jsonNodes = nodes.filter(n => n.type === 'json');
+  const arrayNodes = nodes.filter(n => n.type === 'array');
+
+  // Helper to get variable name for a node
+  const getVarName = (node) => {
+    if (!node) return '"undefined"';
+    switch (node.type) {
+      case 'input': return `input${inputNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'function': return `funcResult${functionNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'math': return `mathResult${mathNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'text': return `textResult${textNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'logic': return `condition${logicNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'random': return `random${randomNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'merge': return `merged${mergeNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'delay': return `delayed${delayNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'regex': return `regexResult${regexNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'fetch': return `fetchResult${fetchNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'loop': return `loopResult${loopNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'conditional': return `condResult${conditionalNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'console': return `consoleResult${consoleNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'date': return `dateResult${dateNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'json': return `jsonResult${jsonNodes.findIndex(n => n.id === node.id) + 1}`;
+      case 'array': return `arrayResult${arrayNodes.findIndex(n => n.id === node.id) + 1}`;
+      default: return '"unknown"';
+    }
+  };
+
+  const getSourceVar = (nodeId) => {
+    const inputEdge = edges.find(e => e.target === nodeId);
+    if (!inputEdge) return '"noInput"';
+    const sourceNode = nodes.find(n => n.id === inputEdge.source);
+    return getVarName(sourceNode);
+  };
+
+  // Generate input variables
+  if (inputNodes.length > 0) {
+    methodCode += '        // Giriş Değerleri\n';
+    inputNodes.forEach((node, i) => {
+      const value = node.data.value || '';
+      methodCode += `        String input${i + 1} = "${value}";\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate random values
+  if (randomNodes.length > 0) {
+    methodCode += '        // Rastgele Değerler\n';
+    methodCode += '        Random rand = new Random();\n';
+    randomNodes.forEach((node, i) => {
+      const type = node.data.randomType || 'number';
+      const min = node.data.min || 0;
+      const max = node.data.max || 100;
+      let randomCode = '';
+      switch (type) {
+        case 'number':
+          randomCode = `rand.nextInt(${max} - ${min} + 1) + ${min}`;
+          break;
+        case 'uuid':
+          randomCode = `UUID.randomUUID().toString()`;
+          break;
+        case 'boolean':
+          randomCode = `rand.nextBoolean()`;
+          break;
+        default:
+          randomCode = `rand.nextDouble()`;
+      }
+      const varType = type === 'boolean' ? 'boolean' : type === 'uuid' ? 'String' : 'int';
+      methodCode += `        ${varType} random${i + 1} = ${randomCode};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate function calls
+  if (functionNodes.length > 0) {
+    methodCode += '        // Fonksiyonlar\n';
+    functionNodes.forEach((node, i) => {
+      const op = node.data.operation || 'uppercase';
+      const inputVar = getSourceVar(node.id);
+      
+      let operation = '';
+      switch (op) {
+        case 'uppercase': operation = `String.valueOf(${inputVar}).toUpperCase()`; break;
+        case 'lowercase': operation = `String.valueOf(${inputVar}).toLowerCase()`; break;
+        case 'reverse': operation = `new StringBuilder(String.valueOf(${inputVar})).reverse().toString()`; break;
+        case 'length': operation = `String.valueOf(${inputVar}).length()`; break;
+        case 'trim': operation = `String.valueOf(${inputVar}).trim()`; break;
+        case 'double': operation = `String.valueOf(${inputVar}) + String.valueOf(${inputVar})`; break;
+        default: operation = inputVar;
+      }
+      
+      const isLength = op === 'length';
+      methodCode += `        ${isLength ? 'int' : 'String'} funcResult${i + 1} = ${operation};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate math operations
+  if (mathNodes.length > 0) {
+    methodCode += '        // Matematik İşlemleri\n';
+    mathNodes.forEach((node, i) => {
+      const op = node.data.operation || 'add';
+      const mathValue = node.data.mathValue || 0;
+      const inputVar = getSourceVar(node.id);
+      
+      let operation = '';
+      switch (op) {
+        case 'add': operation = `Double.parseDouble(String.valueOf(${inputVar})) + ${mathValue}`; break;
+        case 'subtract': operation = `Double.parseDouble(String.valueOf(${inputVar})) - ${mathValue}`; break;
+        case 'multiply': operation = `Double.parseDouble(String.valueOf(${inputVar})) * ${mathValue}`; break;
+        case 'divide': operation = `Double.parseDouble(String.valueOf(${inputVar})) / ${mathValue}`; break;
+        case 'power': operation = `Math.pow(Double.parseDouble(String.valueOf(${inputVar})), ${mathValue})`; break;
+        case 'modulo': operation = `Double.parseDouble(String.valueOf(${inputVar})) % ${mathValue}`; break;
+        case 'sqrt': operation = `Math.sqrt(Double.parseDouble(String.valueOf(${inputVar})))`; break;
+        case 'abs': operation = `Math.abs(Double.parseDouble(String.valueOf(${inputVar})))`; break;
+        case 'round': operation = `Math.round(Double.parseDouble(String.valueOf(${inputVar})))`; break;
+        case 'floor': operation = `Math.floor(Double.parseDouble(String.valueOf(${inputVar})))`; break;
+        case 'ceil': operation = `Math.ceil(Double.parseDouble(String.valueOf(${inputVar})))`; break;
+        default: operation = inputVar;
+      }
+      
+      methodCode += `        double mathResult${i + 1} = ${operation};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate text operations
+  if (textNodes.length > 0) {
+    methodCode += '        // Metin İşlemleri\n';
+    textNodes.forEach((node, i) => {
+      const op = node.data.operation || 'concat';
+      const param = node.data.textParam || '';
+      const inputVar = getSourceVar(node.id);
+      
+      let operation = '';
+      switch (op) {
+        case 'concat': operation = `String.valueOf(${inputVar}) + "${param}"`; break;
+        case 'prepend': operation = `"${param}" + String.valueOf(${inputVar})`; break;
+        case 'replace': operation = `String.valueOf(${inputVar}).replace("${param}", "${node.data.textParam2 || ''}")`; break;
+        case 'split': operation = `Arrays.asList(String.valueOf(${inputVar}).split("${param || ','}")).toString()`; break;
+        case 'slice': operation = `String.valueOf(${inputVar}).substring(${param || 0})`; break;
+        case 'includes': operation = `String.valueOf(${inputVar}).contains("${param}")`; break;
+        case 'charAt': operation = `String.valueOf(String.valueOf(${inputVar}).charAt(${param || 0}))`; break;
+        case 'indexOf': operation = `String.valueOf(${inputVar}).indexOf("${param}")`; break;
+        default: operation = inputVar;
+      }
+      
+      methodCode += `        Object textResult${i + 1} = ${operation};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate logic operations
+  if (logicNodes.length > 0) {
+    methodCode += '        // Mantık İşlemleri\n';
+    logicNodes.forEach((node, i) => {
+      const condition = node.data.condition || '==';
+      const compareValue = node.data.compareValue || '';
+      const inputVar = getSourceVar(node.id);
+      
+      let operation = '';
+      switch (condition) {
+        case '==': operation = `String.valueOf(${inputVar}).equals("${compareValue}")`; break;
+        case '!=': operation = `!String.valueOf(${inputVar}).equals("${compareValue}")`; break;
+        case '>': operation = `Double.parseDouble(String.valueOf(${inputVar})) > ${compareValue}`; break;
+        case '<': operation = `Double.parseDouble(String.valueOf(${inputVar})) < ${compareValue}`; break;
+        case '>=': operation = `Double.parseDouble(String.valueOf(${inputVar})) >= ${compareValue}`; break;
+        case '<=': operation = `Double.parseDouble(String.valueOf(${inputVar})) <= ${compareValue}`; break;
+        case 'contains': operation = `String.valueOf(${inputVar}).contains("${compareValue}")`; break;
+        case 'startsWith': operation = `String.valueOf(${inputVar}).startsWith("${compareValue}")`; break;
+        case 'endsWith': operation = `String.valueOf(${inputVar}).endsWith("${compareValue}")`; break;
+        default: operation = 'true';
+      }
+      
+      methodCode += `        boolean condition${i + 1} = ${operation};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate delay operations
+  if (delayNodes.length > 0) {
+    methodCode += '        // Gecikme İşlemleri\n';
+    delayNodes.forEach((node, i) => {
+      const delay = node.data.delay || 1000;
+      const inputVar = getSourceVar(node.id);
+      methodCode += `        try { Thread.sleep(${delay}); } catch (InterruptedException e) { e.printStackTrace(); }\n`;
+      methodCode += `        Object delayed${i + 1} = ${inputVar};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate regex operations
+  if (regexNodes.length > 0) {
+    methodCode += '        // RegEx İşlemleri\n';
+    regexNodes.forEach((node, i) => {
+      const op = node.data.operation || 'test';
+      const pattern = node.data.pattern || '';
+      const inputVar = getSourceVar(node.id);
+      
+      let operation = '';
+      switch (op) {
+        case 'test':
+          operation = `Pattern.compile("${pattern}").matcher(String.valueOf(${inputVar})).find()`;
+          break;
+        case 'match':
+          methodCode += `        Matcher matcher${i + 1} = Pattern.compile("${pattern}").matcher(String.valueOf(${inputVar}));\n`;
+          methodCode += `        List<String> matches${i + 1} = new ArrayList<>();\n`;
+          methodCode += `        while (matcher${i + 1}.find()) matches${i + 1}.add(matcher${i + 1}.group());\n`;
+          operation = `matches${i + 1}.toString()`;
+          break;
+        case 'replace':
+          operation = `String.valueOf(${inputVar}).replaceAll("${pattern}", "${node.data.replacement || ''}")`;
+          break;
+        case 'split':
+          operation = `Arrays.asList(String.valueOf(${inputVar}).split("${pattern}")).toString()`;
+          break;
+        default:
+          operation = inputVar;
+      }
+      
+      methodCode += `        Object regexResult${i + 1} = ${operation};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate conditional operations
+  if (conditionalNodes.length > 0) {
+    methodCode += '        // Koşul İşlemleri\n';
+    conditionalNodes.forEach((node, i) => {
+      const condition = node.data.condition || '==';
+      const compareValue = node.data.compareValue || '';
+      const trueValue = node.data.trueValue || 'true';
+      const falseValue = node.data.falseValue || 'false';
+      const inputVar = getSourceVar(node.id);
+      
+      let conditionCode = '';
+      switch (condition) {
+        case '==': conditionCode = `String.valueOf(${inputVar}).equals("${compareValue}")`; break;
+        case '!=': conditionCode = `!String.valueOf(${inputVar}).equals("${compareValue}")`; break;
+        case '>': conditionCode = `Double.parseDouble(String.valueOf(${inputVar})) > ${compareValue}`; break;
+        case '<': conditionCode = `Double.parseDouble(String.valueOf(${inputVar})) < ${compareValue}`; break;
+        case '>=': conditionCode = `Double.parseDouble(String.valueOf(${inputVar})) >= ${compareValue}`; break;
+        case '<=': conditionCode = `Double.parseDouble(String.valueOf(${inputVar})) <= ${compareValue}`; break;
+        default: conditionCode = 'true';
+      }
+      
+      methodCode += `        Object condResult${i + 1} = (${conditionCode}) ? "${trueValue}" : "${falseValue}";\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate loop operations
+  if (loopNodes.length > 0) {
+    methodCode += '        // Döngü İşlemleri\n';
+    loopNodes.forEach((node, i) => {
+      const op = node.data.operation || 'forEach';
+      const times = node.data.times || 5;
+      const inputVar = getSourceVar(node.id);
+      
+      methodCode += `        List<Object> loopResult${i + 1} = new ArrayList<>();\n`;
+      
+      switch (op) {
+        case 'forEach':
+        case 'map':
+          methodCode += `        for (String item : String.valueOf(${inputVar}).split(",")) {\n`;
+          methodCode += `            loopResult${i + 1}.add(item.trim());\n`;
+          methodCode += `        }\n`;
+          break;
+        case 'filter':
+          methodCode += `        for (String item : String.valueOf(${inputVar}).split(",")) {\n`;
+          methodCode += `            if (!item.trim().isEmpty()) loopResult${i + 1}.add(item.trim());\n`;
+          methodCode += `        }\n`;
+          break;
+        case 'times':
+          methodCode += `        for (int j = 0; j < ${times}; j++) {\n`;
+          methodCode += `            loopResult${i + 1}.add(${inputVar});\n`;
+          methodCode += `        }\n`;
+          break;
+        default:
+          methodCode += `        loopResult${i + 1}.add(${inputVar});\n`;
+      }
+    });
+    methodCode += '\n';
+  }
+
+  // Generate date operations
+  if (dateNodes.length > 0) {
+    methodCode += '        // Tarih İşlemleri\n';
+    dateNodes.forEach((node, i) => {
+      const op = node.data.operation || 'now';
+      
+      let operation = '';
+      switch (op) {
+        case 'now': operation = 'LocalDateTime.now().toString()'; break;
+        case 'date': operation = 'LocalDate.now().toString()'; break;
+        case 'time': operation = 'LocalTime.now().toString()'; break;
+        case 'timestamp': operation = 'System.currentTimeMillis()'; break;
+        case 'year': operation = 'LocalDate.now().getYear()'; break;
+        case 'month': operation = 'LocalDate.now().getMonthValue()'; break;
+        case 'day': operation = 'LocalDate.now().getDayOfMonth()'; break;
+        case 'hour': operation = 'LocalTime.now().getHour()'; break;
+        case 'minute': operation = 'LocalTime.now().getMinute()'; break;
+        case 'dayOfWeek': operation = 'LocalDate.now().getDayOfWeek().toString()'; break;
+        default: operation = 'LocalDateTime.now().toString()';
+      }
+      
+      methodCode += `        Object dateResult${i + 1} = ${operation};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate JSON operations
+  if (jsonNodes.length > 0) {
+    methodCode += '        // JSON İşlemleri (basitleştirilmiş)\n';
+    jsonNodes.forEach((node, i) => {
+      const op = node.data.operation || 'parse';
+      const inputVar = getSourceVar(node.id);
+      
+      let operation = '';
+      switch (op) {
+        case 'parse':
+        case 'stringify':
+          operation = `String.valueOf(${inputVar})`; // Simplified
+          break;
+        default:
+          operation = inputVar;
+      }
+      
+      methodCode += `        String jsonResult${i + 1} = ${operation}; // JSON işlemi için org.json veya Gson kullanın\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate array operations
+  if (arrayNodes.length > 0) {
+    methodCode += '        // Dizi İşlemleri\n';
+    arrayNodes.forEach((node, i) => {
+      const op = node.data.operation || 'push';
+      const inputVar = getSourceVar(node.id);
+      
+      methodCode += `        List<Object> arrayResult${i + 1} = new ArrayList<>(Arrays.asList(String.valueOf(${inputVar}).split(",")));\n`;
+      
+      switch (op) {
+        case 'push':
+          methodCode += `        arrayResult${i + 1}.add("newItem");\n`;
+          break;
+        case 'pop':
+          methodCode += `        if (!arrayResult${i + 1}.isEmpty()) arrayResult${i + 1}.remove(arrayResult${i + 1}.size() - 1);\n`;
+          break;
+        case 'shift':
+          methodCode += `        if (!arrayResult${i + 1}.isEmpty()) arrayResult${i + 1}.remove(0);\n`;
+          break;
+        case 'reverse':
+          methodCode += `        Collections.reverse(arrayResult${i + 1});\n`;
+          break;
+        case 'sort':
+          methodCode += `        Collections.sort(arrayResult${i + 1}, (a, b) -> String.valueOf(a).compareTo(String.valueOf(b)));\n`;
+          break;
+        case 'length':
+          methodCode += `        int arrayLen${i + 1} = arrayResult${i + 1}.size();\n`;
+          break;
+      }
+    });
+    methodCode += '\n';
+  }
+
+  // Generate console operations
+  if (consoleNodes.length > 0) {
+    methodCode += '        // Console İşlemleri\n';
+    consoleNodes.forEach((node, i) => {
+      const logType = node.data.logType || 'log';
+      const label = node.data.label || '';
+      const inputVar = getSourceVar(node.id);
+      
+      let printStatement = '';
+      switch (logType) {
+        case 'error':
+          printStatement = label 
+            ? `System.err.println("[ERROR] ${label}: " + ${inputVar})`
+            : `System.err.println("[ERROR] " + ${inputVar})`;
+          break;
+        case 'warn':
+          printStatement = label 
+            ? `System.out.println("[WARN] ${label}: " + ${inputVar})`
+            : `System.out.println("[WARN] " + ${inputVar})`;
+          break;
+        case 'info':
+          printStatement = label 
+            ? `System.out.println("[INFO] ${label}: " + ${inputVar})`
+            : `System.out.println("[INFO] " + ${inputVar})`;
+          break;
+        default:
+          printStatement = label 
+            ? `System.out.println("${label}: " + ${inputVar})`
+            : `System.out.println(${inputVar})`;
+      }
+      
+      methodCode += `        ${printStatement};\n`;
+      methodCode += `        Object consoleResult${i + 1} = ${inputVar};\n`;
+    });
+    methodCode += '\n';
+  }
+
+  // Generate output
+  if (outputNodes.length > 0) {
+    methodCode += '        // Çıkış\n';
+    outputNodes.forEach((node, i) => {
+      const outputVar = getSourceVar(node.id);
+      methodCode += `        System.out.println("Çıkış ${i + 1}: " + ${outputVar});\n`;
+    });
+  }
+
+  // Build the complete Java file
+  let code = '// Logic Flow Builder - Java Kodu\n';
+  code += Array.from(imports).map(imp => `import ${imp};`).join('\n') + '\n\n';
+  code += 'public class Flow {\n';
+  code += '    public static void main(String[] args) {\n';
+  code += methodCode || '        // Henüz işlem yok\n';
+  code += '    }\n';
+  code += '}\n';
+
+  return code;
+}

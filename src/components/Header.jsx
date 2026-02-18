@@ -1,6 +1,7 @@
 import { memo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../hooks/useTheme';
+import { toPng, toSvg } from 'html-to-image';
 
 const languageNames = {
   javascript: 'JavaScript',
@@ -8,7 +9,7 @@ const languageNames = {
   java: 'Java',
 };
 
-const Header = memo(({ onRun, isRunning, onToggleCodeDrawer, isCodeDrawerOpen, onExport, onImport, onClear, onUndo, onRedo, canUndo, canRedo, selectedLanguage, onBackToHome }) => {
+const Header = memo(({ onRun, isRunning, onToggleCodeDrawer, isCodeDrawerOpen, onExport, onImport, onClear, onUndo, onRedo, canUndo, canRedo, selectedLanguage, onBackToHome, flowRef }) => {
   const fileInputRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
 
@@ -25,6 +26,26 @@ const Header = memo(({ onRun, isRunning, onToggleCodeDrawer, isCodeDrawerOpen, o
       };
       reader.readAsText(file);
       e.target.value = '';
+    }
+  };
+
+  const downloadImage = async (format = 'png') => {
+    if (!flowRef?.current) return;
+    
+    try {
+      const element = flowRef.current.querySelector('.react-flow__viewport');
+      if (!element) return;
+      
+      const dataUrl = format === 'svg' 
+        ? await toSvg(element, { quality: 1, backgroundColor: '#0f172a' })
+        : await toPng(element, { quality: 1, backgroundColor: '#0f172a' });
+      
+      const link = document.createElement('a');
+      link.download = `flowscript-${Date.now()}.${format}`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Image export failed:', err);
     }
   };
 
@@ -77,7 +98,14 @@ const Header = memo(({ onRun, isRunning, onToggleCodeDrawer, isCodeDrawerOpen, o
             className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white transition-all"
             title="Dışa Aktar (JSON)"
           >
-            💾 Dışa Aktar
+            💾 JSON
+          </button>
+          <button
+            onClick={() => downloadImage('png')}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white transition-all"
+            title="Görsel olarak indir (PNG)"
+          >
+            🖼️ PNG
           </button>
           <button
             onClick={onClear}
